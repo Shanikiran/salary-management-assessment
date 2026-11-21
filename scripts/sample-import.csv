@@ -1,0 +1,8 @@
+name,department,role,country,city,joining_date,status,base_pay,currency,pay_frequency,effective_from
+Aarav Sharma,Engineering,Software Engineer,India,Pune,2023-04-10,ACTIVE,1200000,INR,ANNUAL,2023-04-10
+Emily Carter,Product,Product Manager,United States,New York,2022-01-17,ACTIVE,145000,USD,ANNUAL,2022-01-17
+Lukas Weber,Engineering,Senior Software Engineer,Germany,Berlin,2021-06-01,ACTIVE,98000,EUR,ANNUAL,2021-06-01
+Sakura Tanaka,Customer Success,Customer Success Manager,Japan,Tokyo,2024-02-05,ACTIVE,8200000,JPY,ANNUAL,2024-02-05
+Lucas Silva,Sales,Sales Executive,Brazil,São Paulo,2025-09-15,ON_LEAVE,140000,BRL,ANNUAL,2025-09-15
+Invalid Salary,Finance,Financial Analyst,India,Mumbai,2024-03-01,ACTIVE,-50000,INR,ANNUAL,2024-03-01
+Missing Currency,Marketing,Marketing Executive,United Kingdom,London,2023-08-20,ACTIVE,52000,,ANNUAL,2023-08-20

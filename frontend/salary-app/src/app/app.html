@@ -1,0 +1,12 @@
+<header class="topbar">
+  <h1>ACME Salary Management</h1>
+  <nav>
+    <a routerLink="/employees" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Employees</a>
+    <a routerLink="/dashboard" routerLinkActive="active">Insights</a>
+    <a routerLink="/import" routerLinkActive="active">CSV Import</a>
+    <a routerLink="/employees/new" routerLinkActive="active">+ Add employee</a>
+  </nav>
+</header>
+<main>
+  <router-outlet />
+</main>

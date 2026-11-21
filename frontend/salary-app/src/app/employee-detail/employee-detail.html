@@ -1,0 +1,90 @@
+<h2>Employee detail</h2>
+
+@if (loading) { <p>Loading…</p> }
+@if (error) { <p class="error">{{ error }}</p> <p><a routerLink="/employees">← Back to list</a></p> }
+
+@if (detail; as d) {
+<p><a routerLink="/employees">← Back to list</a></p>
+
+<div class="card">
+  <h3>{{ d.employee.name }} <span class="muted">({{ d.employee.id }})</span></h3>
+  <dl class="fields">
+    <dt>Department</dt><dd>{{ d.employee.department }}</dd>
+    <dt>Role</dt><dd>{{ d.employee.role }}</dd>
+    <dt>Country</dt><dd>{{ d.employee.country }}</dd>
+    <dt>City</dt><dd>{{ d.employee.city ?? '—' }}</dd>
+    <dt>Joining date</dt><dd>{{ d.employee.joiningDate }}</dd>
+    <dt>Status</dt><dd>{{ d.employee.status }}</dd>
+  </dl>
+  <p>
+    <a class="button" [routerLink]="['/employees', d.employee.id, 'edit']">Edit employee</a>
+    <button class="danger" (click)="deleteEmployee()">Delete employee</button>
+  </p>
+  @if (deleteError) { <p class="error">{{ deleteError }}</p> }
+</div>
+
+<div class="card">
+  <h3>Current salary</h3>
+  @if (d.currentSalary; as s) {
+    <p><strong>{{ s.basePay | number }} {{ s.currency }}</strong> · {{ s.payFrequency }} · effective {{ s.effectiveFrom }}</p>
+  } @else {
+    <p class="muted">No salary record yet.</p>
+  }
+</div>
+
+<div class="card">
+  <h3>Add salary revision</h3>
+  <p class="muted">A revision never overwrites history — it is appended and becomes current from its effective date. The backend rejects negative amounts, bad currency codes and effective dates that are not after the current one.</p>
+  <form (ngSubmit)="submitRevision()" class="form-grid">
+    <label>Base pay
+      <input type="number" step="0.01" min="0" [(ngModel)]="basePay" name="basePay" required />
+    </label>
+    <label>Currency
+      <select [(ngModel)]="currency" name="currency">
+        @for (c of currencies; track c) { <option [value]="c">{{ c }}</option> }
+      </select>
+    </label>
+    <label>Pay frequency
+      <select [(ngModel)]="payFrequency" name="payFrequency">
+        <option value="ANNUAL">ANNUAL</option>
+        <option value="MONTHLY">MONTHLY</option>
+      </select>
+    </label>
+    <label>Effective from
+      <input type="date" [(ngModel)]="effectiveFrom" name="effectiveFrom" required />
+    </label>
+    <button type="submit" [disabled]="submittingRevision">Add revision</button>
+  </form>
+  @if (revisionSuccess) { <p class="success">{{ revisionSuccess }}</p> }
+  @if (revisionError) {
+    <p class="error">{{ revisionError }}</p>
+    @if (revisionDetails.length > 0) {
+      <ul class="error">
+        @for (m of revisionDetails; track m) { <li>{{ m }}</li> }
+      </ul>
+    }
+  }
+</div>
+
+<div class="card">
+  <h3>Salary history (newest first)</h3>
+  @if (d.salaryHistory.length === 0) {
+    <p class="muted">No salary records.</p>
+  } @else {
+  <table>
+    <thead><tr><th>Effective from</th><th>Base pay</th><th>Currency</th><th>Frequency</th><th>Recorded</th></tr></thead>
+    <tbody>
+      @for (s of d.salaryHistory; track s.id) {
+      <tr>
+        <td>{{ s.effectiveFrom }}</td>
+        <td>{{ s.basePay | number }}</td>
+        <td>{{ s.currency }}</td>
+        <td>{{ s.payFrequency }}</td>
+        <td>{{ s.createdAt }}</td>
+      </tr>
+      }
+    </tbody>
+  </table>
+  }
+</div>
+}

@@ -1,0 +1,35 @@
+<h2>Import employees from CSV</h2>
+<p class="muted">Bulk import is the migration path off Excel. Each row is validated; bad rows are skipped and reported below instead of blocking the whole file.</p>
+
+<p>
+  <a class="button secondary" href="/sample-import.csv" download>Download sample CSV</a>
+  <span class="muted">Expected columns: name, department, role, country, city, joining_date, status, base_pay, currency, pay_frequency, effective_from.</span>
+</p>
+
+<div class="card">
+  <label>CSV file
+    <input type="file" accept=".csv,text/csv" (change)="onFileChange($event)" />
+  </label>
+  @if (selectedFile) { <p>Selected: {{ selectedFile.name }} ({{ selectedFile.size | number }} bytes)</p> }
+  <button (click)="upload()" [disabled]="!selectedFile || uploading">{{ uploading ? 'Importing…' : 'Import CSV' }}</button>
+  @if (error) { <p class="error">{{ error }}</p> }
+</div>
+
+@if (result; as r) {
+<div class="card">
+  <h3>Import result</h3>
+  <p><strong>{{ r.imported }} imported</strong> · <strong>{{ r.failed }} failed</strong></p>
+  @if (r.errors.length === 0) {
+    <p class="success">All rows imported successfully.</p>
+  } @else {
+  <table>
+    <thead><tr><th>Row</th><th>Reason</th></tr></thead>
+    <tbody>
+      @for (e of r.errors; track e.row) {
+      <tr><td>{{ e.row }}</td><td>{{ e.reason }}</td></tr>
+      }
+    </tbody>
+  </table>
+  }
+</div>
+}

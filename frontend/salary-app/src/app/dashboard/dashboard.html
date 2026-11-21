@@ -1,0 +1,103 @@
+<h2>Salary insights</h2>
+<p class="muted">All figures are shown in the currency they are stored in. Currencies are <strong>never converted</strong> — each row is grouped by its own currency, so compare numbers only within the same currency.</p>
+
+@if (loading) { <p>Loading…</p> }
+@if (error) { <p class="error">{{ error }}</p> }
+
+<p>
+  Export as CSV:
+  <a class="button secondary" [href]="exportUrl('by-department')" download>By department</a>
+  <a class="button secondary" [href]="exportUrl('by-country')" download>By country</a>
+  <a class="button secondary" [href]="exportUrl('by-role')" download>By role</a>
+  <a class="button secondary" [href]="exportUrl('distribution')" download>Distribution</a>
+</p>
+
+<h3>Average / median pay by department</h3>
+@if (byDepartment.length > 0) {
+<table>
+  <thead><tr><th>Department</th><th>Currency</th><th>Headcount</th><th>Average</th><th>Median</th><th>Min</th><th>Max</th></tr></thead>
+  <tbody>
+    @for (r of byDepartment; track r.group + r.currency) {
+    <tr><td>{{ r.group }}</td><td>{{ r.currency }}</td><td>{{ r.headcount | number }}</td><td>{{ r.average | number:'1.2-2' }}</td><td>{{ r.median | number:'1.2-2' }}</td><td>{{ r.min | number }}</td><td>{{ r.max | number }}</td></tr>
+    }
+  </tbody>
+</table>
+}
+
+<h3>Average / median pay by country</h3>
+@if (byCountry.length > 0) {
+<table>
+  <thead><tr><th>Country</th><th>Currency</th><th>Headcount</th><th>Average</th><th>Median</th><th>Min</th><th>Max</th></tr></thead>
+  <tbody>
+    @for (r of byCountry; track r.group + r.currency) {
+    <tr><td>{{ r.group }}</td><td>{{ r.currency }}</td><td>{{ r.headcount | number }}</td><td>{{ r.average | number:'1.2-2' }}</td><td>{{ r.median | number:'1.2-2' }}</td><td>{{ r.min | number }}</td><td>{{ r.max | number }}</td></tr>
+    }
+  </tbody>
+</table>
+}
+
+<h3>Average / median pay by role</h3>
+@if (byRole.length > 0) {
+<table>
+  <thead><tr><th>Role</th><th>Currency</th><th>Headcount</th><th>Average</th><th>Median</th><th>Min</th><th>Max</th></tr></thead>
+  <tbody>
+    @for (r of byRole; track r.group + r.currency) {
+    <tr><td>{{ r.group }}</td><td>{{ r.currency }}</td><td>{{ r.headcount | number }}</td><td>{{ r.average | number:'1.2-2' }}</td><td>{{ r.median | number:'1.2-2' }}</td><td>{{ r.min | number }}</td><td>{{ r.max | number }}</td></tr>
+    }
+  </tbody>
+</table>
+}
+
+<h3>Same role across countries</h3>
+<form class="filters" (ngSubmit)="runCompare()">
+  <label>Role
+    <select [(ngModel)]="compareRole" name="compareRole">
+      @for (r of roles; track r) { <option [value]="r">{{ r }}</option> }
+    </select>
+  </label>
+  <button type="submit">Compare</button>
+</form>
+@if (compareLoading) { <p>Loading…</p> }
+@if (compareError) { <p class="error">{{ compareError }}</p> }
+@if (!compareLoading && compareRows.length === 0) { <p class="muted">No pay data for this role.</p> }
+@if (compareRows.length > 0) {
+<table>
+  <thead><tr><th>Country</th><th>Currency</th><th>Headcount</th><th>Average</th><th>Median</th><th>Min</th><th>Max</th></tr></thead>
+  <tbody>
+    @for (r of compareRows; track r.group + r.currency) {
+    <tr><td>{{ r.group }}</td><td>{{ r.currency }}</td><td>{{ r.headcount | number }}</td><td>{{ r.average | number:'1.2-2' }}</td><td>{{ r.median | number:'1.2-2' }}</td><td>{{ r.min | number }}</td><td>{{ r.max | number }}</td></tr>
+    }
+  </tbody>
+</table>
+<p class="muted">Each country is paid in its own currency — do not compare the raw numbers across currencies.</p>
+}
+
+<h3>Pay distribution bands (per currency)</h3>
+@if (distribution.length > 0) {
+  @for (d of distribution; track d.currency) {
+  <h4>{{ d.currency }}</h4>
+  <table>
+    <thead><tr><th>Band</th><th>Range ({{ d.currency }})</th><th>Headcount</th></tr></thead>
+    <tbody>
+      @for (b of d.bands; track b.label) {
+      <tr><td>{{ b.label }}</td><td>{{ bandRange(b) }}</td><td>{{ b.headcount | number }}</td></tr>
+      }
+    </tbody>
+  </table>
+  }
+}
+
+<h3>Headcount by band</h3>
+@if (bandCurrencies.length > 0) {
+  @for (cur of bandCurrencies; track cur) {
+  <h4>{{ cur }}</h4>
+  <table>
+    <thead><tr><th>Band</th><th>Range ({{ cur }})</th><th>Headcount</th></tr></thead>
+    <tbody>
+      @for (b of headcountByBand[cur]; track b.label) {
+      <tr><td>{{ b.label }}</td><td>{{ bandRange(b) }}</td><td>{{ b.headcount | number }}</td></tr>
+      }
+    </tbody>
+  </table>
+  }
+}

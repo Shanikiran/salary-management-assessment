@@ -1,0 +1,76 @@
+<h2>{{ isEdit ? 'Edit employee' : 'Add employee' }}</h2>
+
+@if (loading) { <p>Loading…</p> }
+@if (error) {
+  <p class="error">{{ error }}</p>
+  @if (errorDetails.length > 0) {
+    <ul class="error">
+      @for (m of errorDetails; track m) { <li>{{ m }}</li> }
+    </ul>
+  }
+}
+
+@if (!loading) {
+<form (ngSubmit)="submit()" class="form-grid">
+  <label>Name
+    <input [(ngModel)]="name" name="name" required />
+  </label>
+  <label>Department
+    <select [(ngModel)]="department" name="department" required>
+      <option value="">— choose —</option>
+      @for (d of departments; track d) { <option [value]="d">{{ d }}</option> }
+    </select>
+  </label>
+  <label>Role
+    <input [(ngModel)]="role" name="role" placeholder="e.g. Software Engineer" required />
+  </label>
+  <label>Country
+    <select [(ngModel)]="country" name="country" required>
+      <option value="">— choose —</option>
+      @for (c of countries; track c) { <option [value]="c">{{ c }}</option> }
+    </select>
+  </label>
+  <label>City
+    <input [(ngModel)]="city" name="city" placeholder="Optional" />
+  </label>
+  <label>Joining date
+    <input type="date" [(ngModel)]="joiningDate" name="joiningDate" required />
+  </label>
+  <label>Status
+    <select [(ngModel)]="status" name="status">
+      @for (s of statuses; track s) { <option [value]="s">{{ s }}</option> }
+    </select>
+  </label>
+
+  @if (!isEdit) {
+  <fieldset>
+    <legend>Initial salary (optional)</legend>
+    <p class="muted">Leave base pay empty to create the employee with no salary record.</p>
+    <div class="form-grid">
+      <label>Base pay
+        <input type="number" step="0.01" min="0" [(ngModel)]="basePay" name="basePay" />
+      </label>
+      <label>Currency
+        <select [(ngModel)]="currency" name="currency">
+          @for (c of currencies; track c) { <option [value]="c">{{ c }}</option> }
+        </select>
+      </label>
+      <label>Pay frequency
+        <select [(ngModel)]="payFrequency" name="payFrequency">
+          <option value="ANNUAL">ANNUAL</option>
+          <option value="MONTHLY">MONTHLY</option>
+        </select>
+      </label>
+      <label>Effective from
+        <input type="date" [(ngModel)]="effectiveFrom" name="effectiveFrom" />
+      </label>
+    </div>
+  </fieldset>
+  }
+
+  <div>
+    <button type="submit" [disabled]="submitting">{{ isEdit ? 'Save changes' : 'Create employee' }}</button>
+    <a class="button secondary" [routerLink]="isEdit ? ['/employees', editId] : ['/employees']">Cancel</a>
+  </div>
+</form>
+}

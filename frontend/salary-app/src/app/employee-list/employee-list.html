@@ -1,0 +1,81 @@
+<h2>Employees</h2>
+<p class="muted">{{ totalElements | number }} employees in total. The list is paged — only {{ size }} rows load at a time.</p>
+
+<form class="filters" (ngSubmit)="applyFilters()">
+  <label>Search name
+    <input type="search" [(ngModel)]="name" name="name" placeholder="e.g. Aarav" />
+  </label>
+  <label>Department
+    <select [(ngModel)]="department" name="department">
+      <option value="">All departments</option>
+      @for (d of departments; track d) { <option [value]="d">{{ d }}</option> }
+    </select>
+  </label>
+  <label>Country
+    <select [(ngModel)]="country" name="country">
+      <option value="">All countries</option>
+      @for (c of countries; track c) { <option [value]="c">{{ c }}</option> }
+    </select>
+  </label>
+  <label>Status
+    <select [(ngModel)]="status" name="status">
+      <option value="">All statuses</option>
+      @for (s of statuses; track s) { <option [value]="s">{{ s }}</option> }
+    </select>
+  </label>
+  <label>Sort by
+    <select [(ngModel)]="sort" name="sort">
+      @for (f of sortFields; track f) { <option [value]="f">{{ f }}</option> }
+    </select>
+  </label>
+  <label>Order
+    <select [(ngModel)]="order" name="order">
+      <option value="asc">Ascending</option>
+      <option value="desc">Descending</option>
+    </select>
+  </label>
+  <button type="submit">Apply</button>
+  <button type="button" class="secondary" (click)="clearFilters()">Clear</button>
+  <a class="button" routerLink="/employees/new">+ Add employee</a>
+</form>
+
+@if (loading) { <p>Loading…</p> }
+@if (error) { <p class="error">{{ error }}</p> }
+
+@if (!loading && employees.length === 0) { <p>No employees match these filters.</p> }
+
+@if (employees.length > 0) {
+<table>
+  <thead>
+    <tr><th>ID</th><th>Name</th><th>Department</th><th>Role</th><th>Country</th><th>City</th><th>Joining date</th><th>Status</th></tr>
+  </thead>
+  <tbody>
+    @for (e of employees; track e.id) {
+    <tr class="clickable" [routerLink]="['/employees', e.id]">
+      <td>{{ e.id }}</td>
+      <td>{{ e.name }}</td>
+      <td>{{ e.department }}</td>
+      <td>{{ e.role }}</td>
+      <td>{{ e.country }}</td>
+      <td>{{ e.city ?? '—' }}</td>
+      <td>{{ e.joiningDate }}</td>
+      <td>{{ e.status }}</td>
+    </tr>
+    }
+  </tbody>
+</table>
+
+<div class="pagination">
+  <button [disabled]="page === 0" (click)="changePage(page - 1)">‹ Prev</button>
+  @for (p of pageNumbers(); track p) {
+    <button [class.active]="p === page" (click)="changePage(p)">{{ p + 1 }}</button>
+  }
+  <button [disabled]="page >= totalPages - 1" (click)="changePage(page + 1)">Next ›</button>
+  <span class="muted">Page {{ page + 1 }} of {{ totalPages | number }}</span>
+  <label>Per page
+    <select [(ngModel)]="size" name="size" (change)="changeSize()">
+      @for (s of pageSizes; track s) { <option [value]="s">{{ s }}</option> }
+    </select>
+  </label>
+</div>
+}
